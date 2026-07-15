@@ -132,6 +132,11 @@ that recipe — no other code changes needed.
   module also available individually.
 - No NVML/driver dependency means it works headless and adds nothing to load.
 
+## Related
+
+Older cards? [**gddr6**](https://github.com/olealgoritme/gddr6) reads GDDR6/GDDR6X
+VRAM temperatures on RTX 30/40-series GPUs.
+
 ## License
 
 MIT © xuw (olealgoritme). Bundles `flux.h` (MIT, same author).

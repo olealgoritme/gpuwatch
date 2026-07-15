@@ -1,7 +1,4 @@
-// gpuwatch_strings.h — Single Source of Truth for all user-facing strings,
-// formats, and CLI tokens. No literal strings live in the app source; everything
-// text-facing is defined here so it can be reviewed, localised, or exported in
-// one place.
+// gpuwatch_strings.h — user-facing strings, formats, and CLI tokens.
 #ifndef GPUWATCH_STRINGS_H
 #define GPUWATCH_STRINGS_H
 
@@ -71,7 +68,7 @@
 
 #define S_ERR_UNKNOWN_OPT     "unknown option: %s\n"
 
-// ── JSON keys (SSOT so the schema is defined once) ──────────────────────────
+// ── JSON keys ───────────────────────────────────────────────────────────────
 #define J_GPUS      "gpus"
 #define J_INDEX     "index"
 #define J_NAME      "name"

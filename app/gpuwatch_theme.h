@@ -1,6 +1,4 @@
-// gpuwatch_theme.h — Single Source of Truth for visual style and tunables:
-// colors, temperature thresholds, layout dimensions, and timing. No magic
-// numbers or ad-hoc colors in the app source.
+// gpuwatch_theme.h — colors, thresholds, layout, and timing.
 #ifndef GPUWATCH_THEME_H
 #define GPUWATCH_THEME_H
 
@@ -60,7 +58,7 @@
 #define HIST_Y_HI           100.0f
 #define HIST_GAP            "  "                        // gap between the two charts
 
-// Text styling (SSOT for SGR).
+// Text styling.
 #define STYLE_BOLD          FLUX_BOLD
 #define STYLE_RESET         "\x1b[0m"
 
