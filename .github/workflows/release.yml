@@ -1,0 +1,61 @@
+name: release
+
+# Cut a release by pushing a tag:  git tag v0.1.0 && git push origin v0.1.0
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write   # needed to create the GitHub Release
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Derive version from tag
+        id: ver
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          # Keep the VERSION file authoritative: it must match the tag.
+          FILE_VERSION="$(cat VERSION)"
+          if [ "$VERSION" != "$FILE_VERSION" ]; then
+            echo "::error::tag v$VERSION does not match VERSION file ($FILE_VERSION)"
+            exit 1
+          fi
+
+      - name: Install build + packaging deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libpci-dev
+          # nfpm builds .deb and .rpm from one config
+          curl -sSfL "https://github.com/goreleaser/nfpm/releases/download/v2.41.3/nfpm_2.41.3_amd64.deb" -o /tmp/nfpm.deb
+          sudo dpkg -i /tmp/nfpm.deb
+
+      - name: Build
+        run: make
+
+      - name: Package (tar.gz, deb, rpm)
+        env:
+          VERSION: ${{ steps.ver.outputs.version }}
+        run: |
+          make dist
+          nfpm package -f packaging/nfpm.yaml -p deb -t build/gpuwatch_amd64.deb
+          nfpm package -f packaging/nfpm.yaml -p rpm -t build/gpuwatch.x86_64.rpm
+          # Stable, version-less names so /releases/latest/download/<name> links
+          # in the README never break.
+          cp build/gpuwatch-$VERSION-linux-x86_64.tar.gz build/gpuwatch-linux-x86_64.tar.gz
+          ls -la build/
+
+      - name: Create GitHub Release with artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          name: gpuwatch ${{ steps.ver.outputs.version }}
+          generate_release_notes: true
+          files: |
+            build/gpuwatch-${{ steps.ver.outputs.version }}-linux-x86_64.tar.gz
+            build/gpuwatch-linux-x86_64.tar.gz
+            build/gpuwatch_amd64.deb
+            build/gpuwatch.x86_64.rpm

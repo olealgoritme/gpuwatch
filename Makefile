@@ -4,19 +4,22 @@
 #   make            build libgpuwatch.a and the gpuwatch binary
 #   make lib        build just the static library
 #   make install    install binary to $(PREFIX)/bin, lib+header to $(PREFIX)
+#   make dist       build a source+binary tarball in build/
 #   make clean
+
+VERSION := $(shell cat VERSION)
 
 PREFIX  ?= /usr/local
 CC      ?= cc
 CFLAGS  ?= -O2 -std=c11 -Wall -Wextra
-CFLAGS  += -Ilib
+CFLAGS  += -Ilib -DGPUWATCH_VERSION=\"$(VERSION)\"
 LDLIBS   = -lpci -lpthread -lm
 
 BUILD    = build
 LIB      = $(BUILD)/libgpuwatch.a
 BIN      = $(BUILD)/gpuwatch
 
-.PHONY: all lib install clean
+.PHONY: all lib install dist clean
 all: $(BIN)
 
 $(BUILD):
@@ -37,6 +40,14 @@ install: all
 	install -Dm755 $(BIN) $(DESTDIR)$(PREFIX)/bin/gpuwatch
 	install -Dm644 $(LIB) $(DESTDIR)$(PREFIX)/lib/libgpuwatch.a
 	install -Dm644 lib/gpuwatch.h $(DESTDIR)$(PREFIX)/include/gpuwatch.h
+
+# portable binary tarball: gpuwatch-<ver>-linux-x86_64.tar.gz
+dist: all
+	@mkdir -p $(BUILD)/dist/gpuwatch-$(VERSION)
+	cp $(BIN) $(BUILD)/dist/gpuwatch-$(VERSION)/
+	cp README.md LICENSE VERSION $(BUILD)/dist/gpuwatch-$(VERSION)/
+	tar -C $(BUILD)/dist -czf $(BUILD)/gpuwatch-$(VERSION)-linux-x86_64.tar.gz gpuwatch-$(VERSION)
+	@echo "built $(BUILD)/gpuwatch-$(VERSION)-linux-x86_64.tar.gz"
 
 clean:
 	rm -rf $(BUILD)

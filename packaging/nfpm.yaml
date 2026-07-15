@@ -1,0 +1,31 @@
+# nfpm config — builds .deb and .rpm from the same spec.
+# Version is injected by CI via the VERSION env var (nfpm expands ${VERSION}).
+name: gpuwatch
+arch: amd64
+platform: linux
+version: ${VERSION}
+section: utils
+priority: optional
+maintainer: Ole Algoritme <olealgoritme@gmail.com>
+description: |
+  Terminal GPU core + VRAM temperature watcher.
+  Reads temperatures directly from hardware registers (no NVML). TUI, ASCII,
+  and JSON output. Supports RTX 5090 (GB202, GDDR7).
+vendor: olealgoritme
+homepage: https://github.com/olealgoritme/gpuwatch
+license: MIT
+
+depends:
+  - libpci3
+
+contents:
+  - src: ./build/gpuwatch
+    dst: /usr/bin/gpuwatch
+  - src: ./build/libgpuwatch.a
+    dst: /usr/lib/libgpuwatch.a
+  - src: ./lib/gpuwatch.h
+    dst: /usr/include/gpuwatch.h
+  - src: ./LICENSE
+    dst: /usr/share/doc/gpuwatch/LICENSE
+  - src: ./README.md
+    dst: /usr/share/doc/gpuwatch/README.md

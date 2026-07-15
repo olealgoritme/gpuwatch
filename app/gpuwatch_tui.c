@@ -269,6 +269,9 @@ int main(int argc, char **argv)
         else if (!strcmp(argv[i], S_ARG_HELP_LONG) || !strcmp(argv[i], S_ARG_HELP_SHORT)) {
             usage(argv[0]); return 0;
         }
+        else if (!strcmp(argv[i], S_ARG_VERSION)) {
+            printf("%s %s\n", S_APP_NAME, GPUWATCH_VERSION); return 0;
+        }
         else { fprintf(stderr, S_ERR_UNKNOWN_OPT, argv[i]); usage(argv[0]); return 2; }
     }
 

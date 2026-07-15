@@ -17,7 +17,32 @@ you can drop into your own program.
 - Kernel boot parameter `iomem=relaxed`
 - `libpci` (`sudo apt install libpci-dev`)
 
-## Build
+## Install
+
+Prebuilt packages for each release are on the
+[**latest release**](https://github.com/olealgoritme/gpuwatch/releases/latest) page.
+
+Debian / Ubuntu:
+
+```
+curl -sSLO https://github.com/olealgoritme/gpuwatch/releases/latest/download/gpuwatch_amd64.deb
+sudo apt install ./gpuwatch_amd64.deb
+```
+
+Fedora / RHEL / openSUSE:
+
+```
+curl -sSLO https://github.com/olealgoritme/gpuwatch/releases/latest/download/gpuwatch.x86_64.rpm
+sudo rpm -i gpuwatch.x86_64.rpm
+```
+
+Portable tarball (any distro):
+
+```
+curl -sSL https://github.com/olealgoritme/gpuwatch/releases/latest/download/gpuwatch-linux-x86_64.tar.gz | tar xz
+```
+
+## Build from source
 
 ```
 make            # builds build/libgpuwatch.a and build/gpuwatch

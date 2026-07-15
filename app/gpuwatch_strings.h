@@ -7,7 +7,6 @@
 
 // ── Branding / chrome ───────────────────────────────────────────────────────
 #define S_APP_NAME            "gpuwatch"
-#define S_APP_TAGLINE         "core + VRAM · direct from hardware"
 #define S_TITLE_BANNER        "GPUWATCH"          // big gradient banner
 
 // ── Labels ──────────────────────────────────────────────────────────────────
@@ -53,6 +52,12 @@
 #define S_ARG_INTERVAL        "--interval"
 #define S_ARG_HELP_LONG       "--help"
 #define S_ARG_HELP_SHORT      "-h"
+#define S_ARG_VERSION         "--version"
+
+// Fallback if not injected by the build (-DGPUWATCH_VERSION="x.y.z").
+#ifndef GPUWATCH_VERSION
+#define GPUWATCH_VERSION      "dev"
+#endif
 
 #define S_USAGE \
     "Usage: %s [" S_ARG_ASCII " | " S_ARG_JSON "] [" S_ARG_INTERVAL " SECONDS] [" S_ARG_ONCE "] [" S_ARG_HELP_LONG "]\n" \
@@ -61,6 +66,7 @@
     "  " S_ARG_JSON "             JSON output\n" \
     "  " S_ARG_INTERVAL " N       seconds between samples in ascii/json (default 1)\n" \
     "  " S_ARG_ONCE "            print a single sample and exit (ascii/json)\n" \
+    "  " S_ARG_VERSION "          print version and exit\n" \
     "  " S_ARG_HELP_LONG "             this help\n"
 
 #define S_ERR_UNKNOWN_OPT     "unknown option: %s\n"

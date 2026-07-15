@@ -1,0 +1,18 @@
+name: ci
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install deps
+        run: sudo apt-get update && sudo apt-get install -y build-essential libpci-dev
+      - name: Build (warnings are errors)
+        run: make CFLAGS="-O2 -std=c11 -Wall -Wextra -Werror -Ilib -DGPUWATCH_VERSION=\\\"ci\\\""
+      - name: Smoke-check binary
+        run: ./build/gpuwatch --version && ./build/gpuwatch --help
