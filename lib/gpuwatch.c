@@ -1,16 +1,6 @@
 // gpuwatch.c — direct-from-hardware GPU temperature reader (no NVML).
-//
-// To add a GPU: add one row to k_table[] with its PCI id, names, and a register
-// recipe. The sampling logic is fully generic over that recipe.
-//
-// Design notes / safety:
-//   * All hardware access is read-only (/dev/mem O_RDONLY, PROT_READ).
-//   * Every register offset is bounds-checked against the BAR0 size before the
-//     mmap, so a bad recipe can never read outside the device aperture.
-//   * The /dev/mem fd lives in the context (no global state; re-entrant across
-//     independent contexts).
-//   * On any read/decode failure the corresponding *_valid flag is cleared and
-//     stale values are never presented as current.
+// To add a GPU, add a row to k_table[]. All access is read-only and
+// bounds-checked against the BAR0 size.
 #define _GNU_SOURCE
 #include "gpuwatch.h"
 

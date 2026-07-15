@@ -1,13 +1,5 @@
-// gpuwatch_tui.c — GPU core + VRAM temperature watcher.
-//
-// Modes (see --help):
-//   (default)   sleek TUI (flux.h)
-//   --ascii     plain looping/one-shot CLI output (pipe-friendly)
-//   --json      JSON output
-//
-// Reads temperatures directly from hardware via lib/gpuwatch (no NVML).
-// All user-facing strings live in gpuwatch_strings.h; all style/tunables in
-// gpuwatch_theme.h (single source of truth — no literals in this file).
+// gpuwatch_tui.c — TUI / ASCII / JSON front-end (see --help).
+// Strings live in gpuwatch_strings.h, style/tunables in gpuwatch_theme.h.
 #define FLUX_IMPL
 #include "flux.h"
 #include "gpuwatch.h"
@@ -52,12 +44,11 @@ static void record_history(App *a)
 }
 
 // ── TUI ─────────────────────────────────────────────────────────────────────
-// Live content width: fill the terminal, clamped to sane bounds.
+// Live content width: fill the whole pane edge-to-edge (floor at a minimum).
 static int ui_width(void)
 {
-    int w = flux_cols() - 2 * UI_SIDE_MARGIN;
+    int w = flux_cols();
     if (w < UI_WIDTH_MIN) w = UI_WIDTH_MIN;
-    if (w > UI_WIDTH_MAX) w = UI_WIDTH_MAX;
     return w;
 }
 
@@ -208,6 +199,13 @@ static void tui_view(FluxModel *m, char *buf, int bufsz)
         }
         if (a->gpu.count > 1) { flux_divider(&sb, w, NULL); flux_sb_nl(&sb); }
     }
+
+    // Pad so the footer sits on the last row (fills the terminal height).
+    enum { FOOTER_LINES = 2 };
+    int used = 0;
+    for (int k = 0; k < sb.len; k++) if (sb.buf[k] == '\n') used++;
+    for (int k = 0, pad = flux_rows() - used - FOOTER_LINES; k < pad; k++)
+        flux_sb_nl(&sb);
 
     FluxKeyHint h[] = {{S_KEY_MODULES, S_HINT_MODULES}, {S_KEY_QUIT, S_HINT_QUIT}};
     flux_footer(&sb, h, 2, w);

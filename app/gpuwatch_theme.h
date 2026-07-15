@@ -7,14 +7,11 @@
 #include "flux.h"
 
 // ── Layout ──────────────────────────────────────────────────────────────────
-// Content width is the live terminal width (flux_cols()) clamped to [MIN,MAX]
-// minus a side margin, so the UI fills whatever screen it is given and reflows
-// on resize.
+// Content width is the live terminal width (flux_cols()), floored at a minimum;
+// the UI fills the pane edge-to-edge and reflows on resize.
 #define UI_WIDTH_MIN        40
-#define UI_WIDTH_MAX        160
-#define UI_SIDE_MARGIN      2       // cells of breathing room each side
-#define UI_HISTORY_LEN      512     // sparkline history samples (ring capacity)
-#define UI_HISTORY_HEIGHT   10      // sparkline rows
+#define UI_HISTORY_LEN      512     // history ring capacity
+#define UI_HISTORY_HEIGHT   10      // history chart rows
 #define UI_GAUGE_MIN        0.0f
 #define UI_GAUGE_MAX        110.0f
 

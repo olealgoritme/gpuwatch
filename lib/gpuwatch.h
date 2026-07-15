@@ -1,13 +1,7 @@
 // gpuwatch.h — GPU core + VRAM temperature reader library.
 //
-// Reads NVIDIA GPU temperatures on Linux by reading hardware registers directly
-// from BAR0 — no NVML, no driver API, no external runtime.
-//
-// Adding a GPU is a single table entry in gpuwatch.c: give its PCI id, names,
-// and a register recipe (core offset + decode, VRAM offset + decode + optional
-// per-module stride). See `gpuwatch_model` and `k_table` there.
-//
-// Requires: root (reads /dev/mem), kernel param iomem=relaxed, libpci.
+// Reads NVIDIA GPU temperatures on Linux directly from BAR0 hardware registers
+// (no NVML, no driver API). Requires root, iomem=relaxed, and libpci.
 #ifndef GPUWATCH_H
 #define GPUWATCH_H
 
