@@ -33,8 +33,6 @@ static void record_history(App *a)
     for (int i = 0; i < a->gpu.count; i++) {
         gpuwatch_gpu *g = &a->gpu.gpus[i];
         int len_before = a->hist_len[i];
-        // core ring advances the shared length; vram uses a throwaway counter so
-        // both rings stay the same length in lockstep.
         int tmp = len_before;
         push_hist(a->core_hist[i], &a->hist_len[i],
                   g->core_valid ? (float)g->core_temp : 0.0f);
@@ -44,7 +42,6 @@ static void record_history(App *a)
 }
 
 // ── TUI ─────────────────────────────────────────────────────────────────────
-// Live content width: fill the whole pane edge-to-edge (floor at a minimum).
 static int ui_width(void)
 {
     int w = flux_cols();
@@ -56,8 +53,6 @@ static FluxCmd tui_init(FluxModel *m)
 {
     App *a = m->state;
     a->show_modules = 1;
-    // Sample immediately so the first rendered frame is fully populated
-    // (no blank/animating-in launch).
     gpuwatch_sample(&a->gpu);
     record_history(a);
     return flux_tick(UI_SAMPLE_MS);
@@ -76,7 +71,6 @@ static FluxCmd tui_update(FluxModel *m, FluxMsg msg)
     return FLUX_CMD_NONE;
 }
 
-// Colour for a temperature, by threshold band (SSOT for temp colouring).
 static const char *temp_color(int c)
 {
     if ((float)c >= TEMP_HOT_C)  return COL_HOT;
@@ -84,9 +78,6 @@ static const char *temp_color(int c)
     return COL_OK;
 }
 
-// Render one temperature row:  LABEL  ███████████░░░░░  NN°C
-// Bar is scaled to the fixed [TEMP_BAR_LO, TEMP_BAR_HI] window so differences
-// are visible and the scale never jumps. Colour follows the threshold band.
 static void temp_bar(FluxSB *sb, const char *label, int valid, int temp, int w)
 {
     flux_sb_appendf(sb, "%s%-*s%s ", COL_TEXT2, BAR_LABEL_W, label, COL_TEXT);
@@ -116,12 +107,10 @@ static void tui_view(FluxModel *m, char *buf, int bufsz)
 {
     App *a = m->state;
     FluxSB sb; flux_sb_init(&sb, buf, bufsz);
-    const int w = ui_width();   // fills the terminal, reflows on resize
+    const int w = ui_width();
 
-    // Flashy gradient banner + tagline header.
     flux_gradient_text(&sb, S_TITLE_BANNER, RGB_ACCENT_A, RGB_ACCENT_B, w);
-    flux_sb_nl(&sb);
-    flux_header(&sb, S_APP_NAME, S_APP_TAGLINE, w);
+    flux_divider(&sb, w, COL_DIM);
     flux_sb_nl(&sb);
 
     if (a->gpu.count == 0) {
@@ -145,8 +134,6 @@ static void tui_view(FluxModel *m, char *buf, int bufsz)
         flux_sb_nl(&sb);
 
         if (a->hist_len[i] > 1) {
-            // Two side-by-side "valley" area charts: CORE (left), VRAM (right).
-            // Each renders into its own scratch buffer, then flux_hbox joins them.
             int gap = (int)sizeof(HIST_GAP) - 1;
             int half = (w - gap) / 2;
             if (half < UI_WIDTH_MIN / 2) half = UI_WIDTH_MIN / 2;
@@ -156,12 +143,11 @@ static void tui_view(FluxModel *m, char *buf, int bufsz)
             flux_sb_init(&lsb, lbuf, sizeof lbuf);
             flux_sb_init(&rsb, rbuf, sizeof rbuf);
 
-            // Bold, coloured panel titles (the widget's own title is dim/grey).
             flux_sb_appendf(&lsb, "%s%s%s%s\n", STYLE_BOLD, COL_HIST_CORE, S_TITLE_CORE, STYLE_RESET);
             flux_sb_appendf(&rsb, "%s%s%s%s\n", STYLE_BOLD, COL_HIST_VRAM, S_TITLE_VRAM, STYLE_RESET);
 
             FluxAreaOpts ca = {0};
-            ca.color = COL_HIST_CORE;   // title drawn above; NULL here
+            ca.color = COL_HIST_CORE;
             ca.y_min = HIST_Y_LO; ca.y_max = HIST_Y_HI; ca.show_axes = 1;
             flux_area_chart(&lsb, a->core_hist[i], a->hist_len[i], half, UI_HISTORY_HEIGHT, &ca);
 
@@ -179,7 +165,6 @@ static void tui_view(FluxModel *m, char *buf, int bufsz)
         if (g->module_count > 0) {
             if (a->show_modules) {
                 flux_sb_appendf(&sb, "%s%s%s\n", COL_TEXT2, S_TITLE_MODULES, COL_TEXT);
-                // Compact colour-coded grid: "m0 48°C  m1 50°C  ..." to width.
                 int per_row = w / MODULE_CELL_W;
                 if (per_row < 1) per_row = 1;
                 for (int mo = 0; mo < g->module_count; mo++) {
@@ -190,7 +175,6 @@ static void tui_view(FluxModel *m, char *buf, int bufsz)
                 }
                 if (g->module_count % per_row != 0) flux_sb_nl(&sb);
             } else {
-                // Collapsed: one-line hint so the layout below stays put.
                 flux_sb_appendf(&sb, "%s%s %s(%d modules · press %s to show)%s\n",
                     COL_TEXT2, S_TITLE_MODULES, COL_DIM,
                     g->module_count, S_KEY_MODULES, COL_TEXT);
@@ -200,7 +184,6 @@ static void tui_view(FluxModel *m, char *buf, int bufsz)
         if (a->gpu.count > 1) { flux_divider(&sb, w, NULL); flux_sb_nl(&sb); }
     }
 
-    // Pad so the footer sits on the last row (fills the terminal height).
     enum { FOOTER_LINES = 2 };
     int used = 0;
     for (int k = 0; k < sb.len; k++) if (sb.buf[k] == '\n') used++;
