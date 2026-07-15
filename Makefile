@@ -1,4 +1,4 @@
-# gpuwatch — GPU core + VRAM temperature watcher
+# gpuwatch - GPU core + VRAM temperature watcher
 #
 # Targets:
 #   make            build libgpuwatch.a and the gpuwatch binary

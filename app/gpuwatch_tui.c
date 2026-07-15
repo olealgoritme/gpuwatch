@@ -1,4 +1,4 @@
-// gpuwatch_tui.c — TUI / ASCII / JSON front-end (see --help).
+// gpuwatch_tui.c - TUI / ASCII / JSON front-end (see --help).
 // Strings live in gpuwatch_strings.h, style/tunables in gpuwatch_theme.h.
 #define FLUX_IMPL
 #include "flux.h"

@@ -1,4 +1,4 @@
-// gpuwatch.c — direct-from-hardware GPU temperature reader (no NVML).
+// gpuwatch.c - direct-from-hardware GPU temperature reader (no NVML).
 // To add a GPU, add a row to k_table[]. All access is read-only and
 // bounds-checked against the BAR0 size.
 #define _GNU_SOURCE
@@ -38,7 +38,7 @@ typedef struct {
     module_map   modules;                            // per-module VRAM (optional)
 } gpuwatch_model;
 
-// ── GPU table — ADD NEW GPUs HERE ───────────────────────────────────────────
+// ── GPU table - ADD NEW GPUs HERE ───────────────────────────────────────────
 static const gpuwatch_model k_table[] = {
     {
         .dev_id = 0x2b85, .name = "RTX 5090", .arch = "GB202", .vram = "GDDR7",
@@ -46,7 +46,7 @@ static const gpuwatch_model k_table[] = {
         .vram_off = 0x009A24C0, .vram_dec = DEC_GDDR_MRCODE,
         .modules  = { .base = 0x009024C0, .stride = 0x4000, .vld_off = 0x10, .max_modules = 16 },
     },
-    // Example (untested) — Ada/Ampere single-register VRAM sensor:
+    // Example (untested) - Ada/Ampere single-register VRAM sensor:
     // { .dev_id=0x2684, .name="RTX 4090", .arch="AD102", .vram="GDDR6X",
     //   .vram_off=0x0000E2A8, .vram_dec=DEC_ADA_12_32 },
 };

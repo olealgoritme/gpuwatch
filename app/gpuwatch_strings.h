@@ -1,4 +1,4 @@
-// gpuwatch_strings.h — user-facing strings, formats, and CLI tokens.
+// gpuwatch_strings.h - user-facing strings, formats, and CLI tokens.
 #ifndef GPUWATCH_STRINGS_H
 #define GPUWATCH_STRINGS_H
 

@@ -1,4 +1,4 @@
-// gpuwatch_theme.h — colors, thresholds, layout, and timing.
+// gpuwatch_theme.h - colors, thresholds, layout, and timing.
 #ifndef GPUWATCH_THEME_H
 #define GPUWATCH_THEME_H
 
@@ -18,7 +18,7 @@
 #define UI_SAMPLE_MS        1000    // hardware sample interval (TUI)
 #define CLI_INTERVAL_DEFAULT 1      // seconds (ascii/json loop)
 
-// ── Temperature thresholds (°C) — drive the colour bands ────────────────────
+// ── Temperature thresholds (°C) - drive the colour bands ────────────────────
 #define TEMP_WARN_C         60.0f
 #define TEMP_HOT_C          85.0f
 
@@ -53,7 +53,7 @@
 #define COL_HIST_CORE       FLUX_THEME_ACCENT_FG        // core valley fill
 #define COL_HIST_VRAM       FLUX_THEME_BRAND_PURPLE_FG  // vram valley fill
 
-// History chart y-range (°C) — fixed so both charts share a stable scale.
+// History chart y-range (°C) - fixed so both charts share a stable scale.
 #define HIST_Y_LO           30.0f
 #define HIST_Y_HI           100.0f
 #define HIST_GAP            "  "                        // gap between the two charts

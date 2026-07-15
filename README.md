@@ -1,6 +1,6 @@
 # gpuwatch
 
-A sleek terminal GPU **core + VRAM temperature** watcher for Linux — reading
+A sleek terminal GPU **core + VRAM temperature** watcher for Linux - reading
 temperatures **directly from hardware registers** (no NVML, no driver API, no
 external runtime). Built on [flux.h](https://github.com/olealgoritme/flux.h).
 
@@ -121,7 +121,7 @@ an out-of-range register offset can never read outside the device aperture.
 Support is data-driven. Add one row to `k_table[]` in `lib/gpuwatch.c` with the
 PCI id, names, and the register recipe (core offset + decode, VRAM offset +
 decode, and an optional per-module stride). The sampling logic is generic over
-that recipe — no other code changes needed.
+that recipe - no other code changes needed.
 
 ## How it works
 

@@ -1,4 +1,4 @@
-# nfpm config — builds .deb and .rpm from the same spec.
+# nfpm config - builds .deb and .rpm from the same spec.
 # Version is injected by CI via the VERSION env var (nfpm expands ${VERSION}).
 name: gpuwatch
 arch: amd64
